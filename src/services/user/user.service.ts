@@ -1,10 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConsoleLogger, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserModel } from 'src/models/user.model';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AuthLoginRequest, AuthRegisterRequest } from 'src/interfaces/auth.interface';
+import { AddUserArgs } from 'src/user/args/addUser.args';
+import { GetUserArgs } from 'src/user/args/getUser.args';
 
 @Injectable()
 export class UserService {
@@ -15,7 +17,7 @@ export class UserService {
     // @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
-  async VerifyEmailPassword(params: AuthLoginRequest) {
+  async VerifyEmailPassword(params: GetUserArgs) {
     const emailParams = { email: params.email };
     const user = await this.CheckUserExistByEmail(emailParams);
 
@@ -40,8 +42,17 @@ export class UserService {
   async CheckUserExistByEmail(params: any) {
 
     const user = await this.userRepository.findOne({
-      ...params,
-      is_delete: false
+      where: {
+        ...params,
+        is_delete: false
+      },
+      select: [
+        'avatar',
+        'email',
+        'id',
+        'password',
+        'name'
+      ]
     });
 
     if (!user) return null
@@ -50,7 +61,7 @@ export class UserService {
    
   }
 
-  async CreateUser(params: AuthRegisterRequest) {
+  async CreateUser(params: AddUserArgs) {
     const emailParams = { email: params.email };
     const user = await this.CheckUserExistByEmail(emailParams);
     let newUser = null;
@@ -103,8 +114,9 @@ export class UserService {
     };
   }
 
-  Logout() {
+  Logout(id?: number) {
     // await this.cacheManager.del('userToken');
+    console.log(id)
     throw new HttpException('User logged out successfully!', HttpStatus.OK)
   }
 }

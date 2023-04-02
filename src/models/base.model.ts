@@ -7,8 +7,8 @@ import {
 } from 'typeorm';
 
 export abstract class BaseModel {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({
     type: 'boolean',

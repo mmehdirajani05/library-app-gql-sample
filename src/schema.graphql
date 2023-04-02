@@ -2,7 +2,31 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type User {
+  id: Int!
+  name: String!
+  email: String!
+  token: String!
+}
+
 type Query {
   index: String!
   indexNumber: Float!
+  logout(userId: Int!): String!
+}
+
+type Mutation {
+  register(addUserArgs: AddUserArgs!): User!
+  login(getUserArgs: GetUserArgs!): User!
+}
+
+input AddUserArgs {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input GetUserArgs {
+  email: String!
+  password: String!
 }
