@@ -10,11 +10,11 @@ import { AppService } from './app.service';
 import { UserModel } from './models/user.model';
 import { configService } from './services/config/config.service';
 import { UserService } from './services/user/user.service';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
-    TypeOrmModule.forFeature([UserModel]),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: true,
@@ -23,15 +23,9 @@ import { UserService } from './services/user/user.service';
         path: join(process.cwd(), 'src/graphql.ts'),
       },
     }),
-    JwtModule.register({
-      secret: process.env.SECRETKEY,
-      signOptions: {
-        expiresIn: process.env.EXPIRESIN,
-      },
-    }),
+    UserModule
   ],
-  
   controllers: [AppController],
-  providers: [AppService, UserService, AppResolver],
+  providers: [AppService, AppResolver],
 })
 export class AppModule {}
