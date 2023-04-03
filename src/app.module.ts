@@ -1,15 +1,13 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
-import { UserModel } from './models/user.model';
+import { BookModule } from './book/book.module';
 import { configService } from './services/config/config.service';
-import { UserService } from './services/user/user.service';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -23,7 +21,8 @@ import { UserModule } from './user/user.module';
         path: join(process.cwd(), 'src/graphql.ts'),
       },
     }),
-    UserModule
+    UserModule,
+    BookModule
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],
