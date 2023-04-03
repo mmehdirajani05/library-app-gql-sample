@@ -12,7 +12,7 @@ export abstract class BaseModel {
 
   @Column({
     type: 'boolean',
-    default: true,
+    default: false,
   })
   is_delete: boolean;
 
