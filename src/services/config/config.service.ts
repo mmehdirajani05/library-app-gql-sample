@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { BookModel } from 'src/models/books.model';
+import { CollectionModel } from 'src/models/collection.model';
 import { UserModel } from 'src/models/user.model';
 
 require('dotenv').config();
@@ -45,7 +46,7 @@ class ConfigService {
           rejectUnauthorized: false,
         },
       },
-      entities: [UserModel, BookModel],
+      entities: [UserModel, BookModel, CollectionModel],
     };
   }
 }

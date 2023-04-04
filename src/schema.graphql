@@ -12,6 +12,18 @@ type Book {
   images: [String!]!
 }
 
+type Collection {
+  id: Int!
+  user_id: Int!
+  book_id: Int!
+  status: String!
+}
+
+type BookList {
+  book_collection: [Collection!]!
+  books: [Book!]!
+}
+
 type User {
   id: Int!
   name: String!
@@ -24,7 +36,6 @@ type Query {
   indexNumber: Float!
   logout(userId: Int!): String!
   bookById(bookId: Int!): Book!
-  allBooks: [Book!]!
 }
 
 type Mutation {
@@ -32,6 +43,9 @@ type Mutation {
   login(getUserArgs: GetUserArgs!): User!
   addBook(addBookArgs: AddBookArgs!): Book!
   updateBook(updateBookArgs: UpdateBookArgs!): Book!
+  allBooks(getAllBooksArgs: GetAllBooksArgs!): BookList!
+  addCollection(addCollectionArgs: AddCollectionArgs!): String!
+  updateCollection(updateCollectionArgs: UpdateCollectionArgs!): String!
 }
 
 input AddUserArgs {
@@ -63,4 +77,24 @@ input UpdateBookArgs {
   author: String!
   description: String!
   book_created_at: DateTime!
+}
+
+input GetAllBooksArgs {
+  sort: String!
+  sort_collection_wise: Boolean!
+  search_text: String!
+  user_id: Float!
+}
+
+input AddCollectionArgs {
+  user_id: Float!
+  book_id: Float!
+  status: String!
+}
+
+input UpdateCollectionArgs {
+  id: Float!
+  user_id: Float!
+  book_id: Float!
+  status: String!
 }

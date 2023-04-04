@@ -76,16 +76,14 @@ export class UserService {
 
     const passwordHash = await this.CreatePasswordHash(params.password || '')
 
-    if (!user?.is_delete) {
-      newUser = new UserModel();
-      newUser.name = params.name;
-      newUser.password = passwordHash;
-      newUser.email = params.email;
-      newUser.is_delete = false;
-      newUser.is_verified = false;  
-      // create user and access token
-      newUserRes = await this.userRepository.save(newUser);
-    } 
+    newUser = new UserModel();
+    newUser.name = params.name;
+    newUser.password = passwordHash;
+    newUser.email = params.email;
+    newUser.is_delete = false;
+    newUser.is_verified = false;  
+    // create user and access token
+    newUserRes = await this.userRepository.save(newUser);
 
     const token = this.CreateSignedToken(newUserRes);
     if (newUserRes.password) {

@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AddBookArgs } from 'src/book/args/addBook.args';
+import { GetAllBooksArgs } from 'src/book/args/getAllBooks.args';
 import { UpdateBookArgs } from 'src/book/args/updateBook.args';
 import { BookModel } from 'src/models/books.model';
+import { CollectionModel } from 'src/models/collection.model';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -10,7 +12,10 @@ export class BooksService {
 
   constructor(
     @InjectRepository(BookModel)
-    private bookRepository: Repository<BookModel>
+    private bookRepository: Repository<BookModel>,
+
+    @InjectRepository(CollectionModel)
+    private collectionRepository: Repository<CollectionModel>
   ) {}
 
   async CreateBook(params: AddBookArgs) {
@@ -69,17 +74,56 @@ export class BooksService {
     }
   }
 
-  async GetAllBooks() {
-    let allBooks = await this.bookRepository.find({ 
-      where: {
-        is_delete: false
-      }
-    })
+  getSortValues(sortParams = 'ASC') {
+    return sortParams === 'ASC' || sortParams === 'asc' ? 'ASC' : 'DESC'
+  }
 
-    allBooks = allBooks.map((book) => {
+  getBooksQuery(params: GetAllBooksArgs) {
+    let allBooksQuery = this.bookRepository.createQueryBuilder('book')
+      .select('book')
+      .orderBy('book.book_created_at', this.getSortValues(params.sort))
+
+      if (params.search_text) {
+        allBooksQuery.andWhere("book.title LIKE :title", {title: `%${params.search_text}%`})
+      }
+
+      return allBooksQuery
+  }
+
+  async GetAllBooks(params: GetAllBooksArgs) {
+    let allBooksQuery = this.getBooksQuery(params)
+    let promises: any = [
+      allBooksQuery.getMany()
+    ]
+
+    if (params.user_id) {
+      promises = [
+        ...promises,
+        this.collectionRepository.find({
+          where: {
+            user_id: params.user_id
+          },
+          select: [
+            'user_id',
+            'book_id',
+            'status',
+            'id'
+          ]
+        })
+      ]
+    }
+
+    const resArray = await Promise.all(promises)
+    let [allBooksRes, userCollectionRes]: any = resArray
+    console.log(allBooksRes)
+    allBooksRes = allBooksRes.map((book) => {
       return this.addBookExtraParmas(book)
     })
-    return allBooks
+
+    return {
+      books: allBooksRes,
+      book_collection: userCollectionRes || []
+    }
   }
   
 }

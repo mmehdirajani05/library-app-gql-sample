@@ -1,15 +1,20 @@
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { UserService } from "src/services/user/user.service";
 import { AddBookArgs } from "./args/addBook.args";
 import { UpdateBookArgs } from "./args/updateBook.args";
 import { Book } from "./schema/book.schema";
 import { BooksService } from "src/services/books/books.service";
+import { AddCollectionArgs } from "./args/addCollection.args";
+import { UpdateCollectionArgs } from "./args/updateCollection.args";
+import { CollectionService } from "src/services/collection/collection.service";
+import { GetAllBooksArgs } from "./args/getAllBooks.args";
+import { BookList } from "./schema/BookList.schema";
 
 @Resolver(of => Book)
 export class BookResolver {
 
   constructor(
-    private bookService: BooksService
+    private bookService: BooksService,
+    private collectionService: CollectionService
   ) {}
   
   @Mutation(returns => Book, {name: 'addBook'})
@@ -27,9 +32,20 @@ export class BookResolver {
     return this.bookService.GetBookById(id, true)
   }
 
-  @Query(returns => [Book], {name: 'allBooks'})
-  getAllBooks() {
-    return this.bookService.GetAllBooks()
+  @Mutation(returns => BookList, {name: 'allBooks'})
+  getAllBooks(@Args("getAllBooksArgs") getAllBooksArgs: GetAllBooksArgs) {
+    return this.bookService.GetAllBooks(getAllBooksArgs)
+  }
+
+  //Book Collection
+  @Mutation(returns => String, {name: 'addCollection'})
+  addCollection(@Args("addCollectionArgs") addCollectionArgs: AddCollectionArgs) {
+    return this.collectionService.AddCollection(addCollectionArgs)
+  }
+  
+  @Mutation(returns => String, {name: 'updateCollection'})
+  updateCollection(@Args("updateCollectionArgs") updateCollectionArgs: UpdateCollectionArgs) {
+    return this.collectionService.UpdateCollection(updateCollectionArgs)
   }
   
 }

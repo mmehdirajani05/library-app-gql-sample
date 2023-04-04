@@ -1,14 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { Entity, Column, CreateDateColumn } from 'typeorm';
+import { Entity, Column } from 'typeorm';
 import { BaseModel } from './base.model';
-import { Exclude } from 'class-transformer';
-
-export enum BookCollection {
-  READ =  'read',
-  READING = 'reading',
-  UNREAD = 'want to read'
-}
-
 @Entity({ name: 'book' })
 export class BookModel extends BaseModel {
   @Column({

@@ -34,6 +34,26 @@ export interface UpdateBookArgs {
     book_created_at: DateTime;
 }
 
+export interface GetAllBooksArgs {
+    sort: string;
+    sort_collection_wise: boolean;
+    search_text: string;
+    user_id: number;
+}
+
+export interface AddCollectionArgs {
+    user_id: number;
+    book_id: number;
+    status: string;
+}
+
+export interface UpdateCollectionArgs {
+    id: number;
+    user_id: number;
+    book_id: number;
+    status: string;
+}
+
 export interface Book {
     id: number;
     title: string;
@@ -42,6 +62,18 @@ export interface Book {
     book_created_at: string;
     ratings: string;
     images: string[];
+}
+
+export interface Collection {
+    id: number;
+    user_id: number;
+    book_id: number;
+    status: string;
+}
+
+export interface BookList {
+    book_collection: Collection[];
+    books: Book[];
 }
 
 export interface User {
@@ -56,7 +88,6 @@ export interface IQuery {
     indexNumber(): number | Promise<number>;
     logout(userId: number): string | Promise<string>;
     bookById(bookId: number): Book | Promise<Book>;
-    allBooks(): Book[] | Promise<Book[]>;
 }
 
 export interface IMutation {
@@ -64,6 +95,9 @@ export interface IMutation {
     login(getUserArgs: GetUserArgs): User | Promise<User>;
     addBook(addBookArgs: AddBookArgs): Book | Promise<Book>;
     updateBook(updateBookArgs: UpdateBookArgs): Book | Promise<Book>;
+    allBooks(getAllBooksArgs: GetAllBooksArgs): BookList | Promise<BookList>;
+    addCollection(addCollectionArgs: AddCollectionArgs): string | Promise<string>;
+    updateCollection(updateCollectionArgs: UpdateCollectionArgs): string | Promise<string>;
 }
 
 export type DateTime = any;
