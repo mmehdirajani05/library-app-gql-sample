@@ -24,6 +24,11 @@ type BookList {
   books: [Book!]!
 }
 
+type BookWithCollection {
+  collection: Collection!
+  book: Book!
+}
+
 type User {
   id: Int!
   name: String!
@@ -36,6 +41,7 @@ type Query {
   indexNumber: Float!
   logout(userId: Int!): String!
   bookById(bookId: Int!): Book!
+  bookCollectionById(bookId: Int!, userId: Int!): BookWithCollection!
 }
 
 type Mutation {
@@ -93,7 +99,5 @@ input AddCollectionArgs {
 
 input UpdateCollectionArgs {
   id: Float!
-  user_id: Float!
-  book_id: Float!
   status: String!
 }

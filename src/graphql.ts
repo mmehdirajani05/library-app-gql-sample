@@ -48,8 +48,6 @@ export interface AddCollectionArgs {
 
 export interface UpdateCollectionArgs {
     id: number;
-    user_id: number;
-    book_id: number;
     status: string;
 }
 
@@ -75,6 +73,11 @@ export interface BookList {
     books: Book[];
 }
 
+export interface BookWithCollection {
+    collection: Collection;
+    book: Book;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -87,6 +90,7 @@ export interface IQuery {
     indexNumber(): number | Promise<number>;
     logout(userId: number): string | Promise<string>;
     bookById(bookId: number): Book | Promise<Book>;
+    bookCollectionById(bookId: number, userId: number): BookWithCollection | Promise<BookWithCollection>;
 }
 
 export interface IMutation {

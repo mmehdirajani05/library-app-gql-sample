@@ -8,6 +8,7 @@ import { UpdateCollectionArgs } from "./args/updateCollection.args";
 import { CollectionService } from "src/services/collection/collection.service";
 import { GetAllBooksArgs } from "./args/getAllBooks.args";
 import { BookList } from "./schema/BookList.schema";
+import { BookWithCollection } from "./schema/bookWithCollection.schema";
 
 @Resolver(of => Book)
 export class BookResolver {
@@ -30,6 +31,14 @@ export class BookResolver {
   @Query(returns => Book, {name: 'bookById'})
   getBookById(@Args({name: 'bookId', type:() => Int}) id: number) {
     return this.bookService.GetBookById(id, true)
+  }
+
+  @Query(returns => BookWithCollection, {name: 'bookCollectionById'})
+  getBookAndCollectionById(
+    @Args({name: 'bookId', type:() => Int}) id: number,
+    @Args({name: 'userId', type:() => Int}) userId: number
+  ) {
+    return this.bookService.GetBookAndCollectionById(id, userId, true)
   }
 
   @Mutation(returns => BookList, {name: 'allBooks'})

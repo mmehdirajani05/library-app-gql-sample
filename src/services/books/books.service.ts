@@ -66,6 +66,41 @@ export class BooksService {
     return book ? book : null
   }
 
+  async GetBookAndCollectionById(bookId: number, userId: number, provideCompleteDetails = false) {
+    
+    let promises: any = [
+      this.bookRepository.findOne({ 
+        where: {
+          id: bookId
+        }
+      })
+    ]
+
+    if (userId) {
+      promises.push(
+        this.collectionRepository.findOne({ 
+          where: {
+            book_id: bookId,
+            user_id: userId
+          }
+        }) 
+      )
+    }
+
+    let resArr = await Promise.all(promises)
+
+    let [book, collection] = resArr
+
+    if (provideCompleteDetails) {
+      book = this.addBookExtraParmas(book)
+    }
+
+    return { 
+      book: book ? book : null,
+      collection : collection ? collection : {id: 0, status: 'want to read'},
+    }
+  }
+
   addBookExtraParmas(book: BookModel | any) {
     return {
       ...book,
@@ -115,7 +150,6 @@ export class BooksService {
 
     const resArray = await Promise.all(promises)
     let [allBooksRes, userCollectionRes]: any = resArray
-    console.log(allBooksRes)
     allBooksRes = allBooksRes.map((book) => {
       return this.addBookExtraParmas(book)
     })

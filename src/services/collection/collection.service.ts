@@ -14,7 +14,6 @@ export class CollectionService {
 
     async AddCollection(params: AddCollectionArgs) {
       const newCollection = await this.collectionRepository.save(params)
-      console.log(newCollection)
       return 'Collection Added Successfully'
     }
 
@@ -30,7 +29,7 @@ export class CollectionService {
       }
 
       existingCollection.status = params.status
-      await this.collectionRepository.update(params.id, params)
+      await this.collectionRepository.update(params.id, existingCollection)
       
       return 'Collection Updated Successfully'
     }
