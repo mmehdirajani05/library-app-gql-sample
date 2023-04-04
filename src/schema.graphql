@@ -81,7 +81,6 @@ input UpdateBookArgs {
 
 input GetAllBooksArgs {
   sort: String!
-  sort_collection_wise: Boolean!
   search_text: String!
   user_id: Float!
 }

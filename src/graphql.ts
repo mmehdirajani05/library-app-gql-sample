@@ -36,7 +36,6 @@ export interface UpdateBookArgs {
 
 export interface GetAllBooksArgs {
     sort: string;
-    sort_collection_wise: boolean;
     search_text: string;
     user_id: number;
 }

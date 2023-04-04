@@ -7,9 +7,6 @@ export class GetAllBooksArgs {
   sort: string;
 
   @Field()
-  sort_collection_wise: boolean;
-
-  @Field()
   search_text: string;
 
   @Field()
