@@ -33,4 +33,10 @@ export class BookModel extends BaseModel {
   })
   book_created_at: Date;
 
+  @Column({
+    name: 'images',
+    type: 'simple-array'
+  })
+  images: string[];
+
 }

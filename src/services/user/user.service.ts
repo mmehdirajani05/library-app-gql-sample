@@ -4,7 +4,6 @@ import { UserModel } from 'src/models/user.model';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { AuthLoginRequest, AuthRegisterRequest } from 'src/interfaces/auth.interface';
 import { AddUserArgs } from 'src/user/args/addUser.args';
 import { GetUserArgs } from 'src/user/args/getUser.args';
 

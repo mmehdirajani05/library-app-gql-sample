@@ -70,6 +70,7 @@ input AddBookArgs {
   author: String!
   description: String!
   book_created_at: DateTime!
+  images: [String!]!
 }
 
 """
@@ -83,6 +84,7 @@ input UpdateBookArgs {
   author: String!
   description: String!
   book_created_at: DateTime!
+  images: [String!]!
 }
 
 input GetAllBooksArgs {

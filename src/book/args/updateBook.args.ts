@@ -17,4 +17,7 @@ export class UpdateBookArgs {
 
   @Field()
   book_created_at: Date;
+
+  @Field(() => [String])
+  images: String[];
 }

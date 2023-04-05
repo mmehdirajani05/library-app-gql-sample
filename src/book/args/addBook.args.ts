@@ -14,4 +14,8 @@ export class AddBookArgs {
 
   @Field()
   book_created_at: Date;
+
+  @Field(() => [String])
+  images: string[];
+
 }

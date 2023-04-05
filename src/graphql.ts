@@ -24,6 +24,7 @@ export interface AddBookArgs {
     author: string;
     description: string;
     book_created_at: DateTime;
+    images: string[];
 }
 
 export interface UpdateBookArgs {
@@ -32,6 +33,7 @@ export interface UpdateBookArgs {
     author: string;
     description: string;
     book_created_at: DateTime;
+    images: string[];
 }
 
 export interface GetAllBooksArgs {

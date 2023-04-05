@@ -3,9 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AddBookArgs } from 'src/book/args/addBook.args';
 import { GetAllBooksArgs } from 'src/book/args/getAllBooks.args';
 import { UpdateBookArgs } from 'src/book/args/updateBook.args';
+import { GetAWSSignedUrl } from 'src/constants/getAwsSignededUrl';
 import { BookModel } from 'src/models/books.model';
 import { CollectionModel } from 'src/models/collection.model';
 import { Repository } from 'typeorm';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class BooksService {
@@ -15,7 +17,9 @@ export class BooksService {
     private bookRepository: Repository<BookModel>,
 
     @InjectRepository(CollectionModel)
-    private collectionRepository: Repository<CollectionModel>
+    private collectionRepository: Repository<CollectionModel>,
+
+    private filesService: FileService
   ) {}
 
   async CreateBook(params: AddBookArgs) {
@@ -26,6 +30,7 @@ export class BooksService {
     newBook.book_created_at = params.book_created_at
     newBook.description = params.description
     newBook.is_delete = false
+    newBook.images = params.images
   
     let newBookRes = await this.bookRepository.save(newBook);
     newBookRes = this.addBookExtraParmas(newBookRes)
@@ -45,6 +50,7 @@ export class BooksService {
     updBook.book_created_at = params.book_created_at
     updBook.description = params.description
     updBook.is_delete = false
+    updBook.images = params.images
 
     let updBookRes = await this.bookRepository.update(params.id, updBook);
     updBookRes = this.addBookExtraParmas(updBook)
@@ -105,7 +111,6 @@ export class BooksService {
     return {
       ...book,
       ratings: '4',
-      images: []
     }
   }
 
@@ -158,6 +163,27 @@ export class BooksService {
       books: allBooksRes,
       book_collection: userCollectionRes || []
     }
+  }
+
+  async uploadBookImages(files) {
+    const promises = []
+    const signedUrlPromises = []
+    files.forEach(file => {
+      promises.push(this.filesService.uploadPublicFile(
+        file.buffer,
+        file.originalname,
+      ))
+    });
+  
+    const urls = await Promise.all(promises)
+
+    urls.forEach((url) => {
+      signedUrlPromises.push(GetAWSSignedUrl(url))
+    })
+
+    const signedUrls = await Promise.all(signedUrlPromises)
+
+    return signedUrls
   }
   
 }
