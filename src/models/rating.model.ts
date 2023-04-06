@@ -2,8 +2,8 @@
 import { Entity, Column } from 'typeorm';
 import { BaseModel } from './base.model';
 
-@Entity({ name: 'images' })
-export class ImagesModel extends BaseModel {
+@Entity({ name: 'rating' })
+export class RatingModel extends BaseModel {
   @Column({
     nullable: false,
     name: 'user_id',
@@ -17,9 +17,10 @@ export class ImagesModel extends BaseModel {
   book_id: number;
 
   @Column({
-    name: 'url',
+    name: 'count',
     nullable: false,
+    default: 0
   })
-  url: string;
+  count: number;
 
 }

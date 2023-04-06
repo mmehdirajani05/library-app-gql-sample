@@ -24,9 +24,17 @@ type BookList {
   books: [Book!]!
 }
 
+type BookRatings {
+  id: Int!
+  user_id: Int!
+  book_id: Int!
+  count: Float!
+}
+
 type BookWithCollection {
   collection: Collection!
   book: Book!
+  ratings: [BookRatings!]!
 }
 
 type User {
@@ -52,6 +60,8 @@ type Mutation {
   allBooks(getAllBooksArgs: GetAllBooksArgs!): BookList!
   addCollection(addCollectionArgs: AddCollectionArgs!): String!
   updateCollection(updateCollectionArgs: UpdateCollectionArgs!): String!
+  addBookRatings(addBookRatingsArgs: AddBookRatingsArgs!): String!
+  getBookRatings(getBookRatingsArgs: GetBookRatingsArgs!): BookRatings!
 }
 
 input AddUserArgs {
@@ -102,4 +112,15 @@ input AddCollectionArgs {
 input UpdateCollectionArgs {
   id: Float!
   status: String!
+}
+
+input AddBookRatingsArgs {
+  user_id: Float!
+  book_id: Float!
+  count: Float!
+}
+
+input GetBookRatingsArgs {
+  user_id: Float!
+  book_id: Float!
 }

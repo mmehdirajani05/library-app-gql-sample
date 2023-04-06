@@ -9,6 +9,9 @@ import { CollectionService } from "src/services/collection/collection.service";
 import { GetAllBooksArgs } from "./args/getAllBooks.args";
 import { BookList } from "./schema/BookList.schema";
 import { BookWithCollection } from "./schema/bookWithCollection.schema";
+import { AddBookRatingsArgs } from "./args/addBookRatings.args";
+import { BookRatings } from "./schema/bookRatings.schema";
+import { GetBookRatingsArgs } from "./args/getBookRatings.args";
 
 @Resolver(of => Book)
 export class BookResolver {
@@ -55,6 +58,16 @@ export class BookResolver {
   @Mutation(returns => String, {name: 'updateCollection'})
   updateCollection(@Args("updateCollectionArgs") updateCollectionArgs: UpdateCollectionArgs) {
     return this.collectionService.UpdateCollection(updateCollectionArgs)
+  }
+
+  @Mutation(returns => String, {name: 'addBookRatings'})
+  addBookRatings(@Args("addBookRatingsArgs") addBookRatingsArgs: AddBookRatingsArgs) {
+    return this.bookService.AddBookRatings(addBookRatingsArgs)
+  }
+
+  @Mutation(returns => BookRatings, {name: 'getBookRatings'})
+  getBookRatings(@Args("getBookRatingsArgs") getBookRatingsArgs: GetBookRatingsArgs) {
+    return this.bookService.GetBookRatings(getBookRatingsArgs)
   }
   
 }

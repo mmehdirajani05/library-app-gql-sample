@@ -53,6 +53,17 @@ export interface UpdateCollectionArgs {
     status: string;
 }
 
+export interface AddBookRatingsArgs {
+    user_id: number;
+    book_id: number;
+    count: number;
+}
+
+export interface GetBookRatingsArgs {
+    user_id: number;
+    book_id: number;
+}
+
 export interface Book {
     id: number;
     title: string;
@@ -75,9 +86,17 @@ export interface BookList {
     books: Book[];
 }
 
+export interface BookRatings {
+    id: number;
+    user_id: number;
+    book_id: number;
+    count: number;
+}
+
 export interface BookWithCollection {
     collection: Collection;
     book: Book;
+    ratings: BookRatings[];
 }
 
 export interface User {
@@ -103,6 +122,8 @@ export interface IMutation {
     allBooks(getAllBooksArgs: GetAllBooksArgs): BookList | Promise<BookList>;
     addCollection(addCollectionArgs: AddCollectionArgs): string | Promise<string>;
     updateCollection(updateCollectionArgs: UpdateCollectionArgs): string | Promise<string>;
+    addBookRatings(addBookRatingsArgs: AddBookRatingsArgs): string | Promise<string>;
+    getBookRatings(getBookRatingsArgs: GetBookRatingsArgs): BookRatings | Promise<BookRatings>;
 }
 
 export type DateTime = any;

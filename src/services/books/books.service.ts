@@ -1,11 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AddBookArgs } from 'src/book/args/addBook.args';
+import { AddBookRatingsArgs } from 'src/book/args/addBookRatings.args';
 import { GetAllBooksArgs } from 'src/book/args/getAllBooks.args';
+import { GetBookRatingsArgs } from 'src/book/args/getBookRatings.args';
 import { UpdateBookArgs } from 'src/book/args/updateBook.args';
 import { GetAWSSignedUrl } from 'src/constants/getAwsSignededUrl';
 import { BookModel } from 'src/models/books.model';
 import { CollectionModel } from 'src/models/collection.model';
+import { RatingModel } from 'src/models/rating.model';
 import { Repository } from 'typeorm';
 import { FileService } from '../file/file.service';
 
@@ -18,6 +21,9 @@ export class BooksService {
 
     @InjectRepository(CollectionModel)
     private collectionRepository: Repository<CollectionModel>,
+
+    @InjectRepository(RatingModel)
+    private ratingsRepository: Repository<RatingModel>,
 
     private filesService: FileService
   ) {}
@@ -75,14 +81,22 @@ export class BooksService {
   async GetBookAndCollectionById(bookId: number, userId: number, provideCompleteDetails = false) {
     
     let promises: any = [
+      // query for book
       this.bookRepository.findOne({ 
         where: {
           id: bookId
         }
+      }),
+      // query for ratings
+      this.ratingsRepository.find({
+        where: [{
+          book_id: bookId
+        }]
       })
     ]
 
     if (userId) {
+      // query for collection
       promises.push(
         this.collectionRepository.findOne({ 
           where: {
@@ -95,7 +109,7 @@ export class BooksService {
 
     let resArr = await Promise.all(promises)
 
-    let [book, collection] = resArr
+    let [book, ratings, collection] = resArr
 
     if (provideCompleteDetails) {
       book = this.addBookExtraParmas(book)
@@ -104,6 +118,7 @@ export class BooksService {
     return { 
       book: book ? book : null,
       collection : collection ? collection : {id: 0, status: 'want to read'},
+      ratings
     }
   }
 
@@ -165,7 +180,7 @@ export class BooksService {
     }
   }
 
-  async uploadBookImages(files) {
+  async UploadBookImages(files) {
     const promises = []
     const signedUrlPromises = []
     files.forEach(file => {
@@ -184,6 +199,44 @@ export class BooksService {
     const signedUrls = await Promise.all(signedUrlPromises)
 
     return signedUrls
+  }
+
+  ValidateRatingParams(params: AddBookRatingsArgs) {
+    return {
+      ...params,
+      count: params.count > 5 ? 5 : params.count //count should not be greater than 5
+    }
+  }
+
+  async AddBookRatings(params: AddBookRatingsArgs) {
+    params = this.ValidateRatingParams(params)
+    const existingRatings = await this.ratingsRepository.findOne({
+      where: {
+        user_id: params.user_id,
+        book_id: params.book_id
+      }
+    })
+
+    if (!existingRatings) {
+      const newRatings = await this.ratingsRepository.save(params)
+      return 'Ratings added Succesfully'
+    }
+
+    await this.ratingsRepository.update(existingRatings.id, params)
+    return 'Ratings updated Succesfully'
+
+  }
+
+  async GetBookRatings(params: GetBookRatingsArgs) {
+    let queryParams = { ...params}
+    if (!queryParams.user_id) {
+      delete queryParams.user_id
+    }
+    const existingRatings = await this.ratingsRepository.findOne({
+      where: queryParams
+    })
+    
+    return existingRatings ? existingRatings : {...params, count: 0}
   }
   
 }

@@ -2,6 +2,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { BookModel } from 'src/models/books.model';
 import { CollectionModel } from 'src/models/collection.model';
+import { RatingModel } from 'src/models/rating.model';
 import { UserModel } from 'src/models/user.model';
 
 require('dotenv').config();
@@ -46,7 +47,7 @@ class ConfigService {
           rejectUnauthorized: false,
         },
       },
-      entities: [UserModel, BookModel, CollectionModel],
+      entities: [UserModel, BookModel, CollectionModel, RatingModel],
     };
   }
 }

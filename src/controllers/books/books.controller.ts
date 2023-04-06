@@ -15,7 +15,7 @@ export class BooksController {
     @Req() request: any,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    return this.booksService.uploadBookImages(files);
+    return this.booksService.UploadBookImages(files);
   }
   
 }
