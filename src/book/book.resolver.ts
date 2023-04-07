@@ -14,6 +14,8 @@ import { BookRatings } from "./schema/bookRatings.schema";
 import { GetBookRatingsArgs } from "./args/getBookRatings.args";
 import { PubSub } from 'graphql-subscriptions';
 import { BookRatingsSubscription } from "./schema/ratingsSubscription.schema";
+import { UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from "src/services/user/jwt-auth.guard";
 
 const pubSub = new PubSub();
 
@@ -26,11 +28,13 @@ export class BookResolver {
   ) {}
   
   @Mutation(returns => Book, {name: 'addBook'})
+  @UseGuards(JwtAuthGuard)
   addBook(@Args("addBookArgs") addBookArgs: AddBookArgs) {
     return this.bookService.CreateBook(addBookArgs)
   }
   
   @Mutation(returns => Book, {name: 'updateBook'})
+  @UseGuards(JwtAuthGuard)
   updateBook(@Args("updateBookArgs") updateBookArgs: UpdateBookArgs) {
     return this.bookService.UpdateBook(updateBookArgs)
   }
@@ -55,16 +59,19 @@ export class BookResolver {
 
   //Book Collection
   @Mutation(returns => String, {name: 'addCollection'})
+  @UseGuards(JwtAuthGuard)
   addCollection(@Args("addCollectionArgs") addCollectionArgs: AddCollectionArgs) {
     return this.collectionService.AddCollection(addCollectionArgs)
   }
   
   @Mutation(returns => String, {name: 'updateCollection'})
+  @UseGuards(JwtAuthGuard)
   updateCollection(@Args("updateCollectionArgs") updateCollectionArgs: UpdateCollectionArgs) {
     return this.collectionService.UpdateCollection(updateCollectionArgs)
   }
 
   @Mutation(returns => String, {name: 'addBookRatings'})
+  @UseGuards(JwtAuthGuard)
   async addBookRatings(@Args("addBookRatingsArgs") addBookRatingsArgs: AddBookRatingsArgs) {
     const { message, ratingsDetail }: any = await this.bookService.AddBookRatings(addBookRatingsArgs)
     pubSub.publish('addBookRatingsSubscription', { addBookRatingsSubscription: ratingsDetail });
@@ -72,6 +79,7 @@ export class BookResolver {
   }
 
   @Mutation(returns => BookRatings, {name: 'getBookRatings'})
+  @UseGuards(JwtAuthGuard)
   getBookRatings(@Args("getBookRatingsArgs") getBookRatingsArgs: GetBookRatingsArgs) {
     return this.bookService.GetBookRatings(getBookRatingsArgs)
   }

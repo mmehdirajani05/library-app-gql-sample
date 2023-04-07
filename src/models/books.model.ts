@@ -35,7 +35,8 @@ export class BookModel extends BaseModel {
 
   @Column({
     name: 'images',
-    type: 'simple-array'
+    type: 'simple-array',
+    nullable: false
   })
   images: string[];
 

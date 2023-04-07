@@ -8,7 +8,6 @@ import { UserModel } from "src/models/user.model";
 import { BooksService } from "src/services/books/books.service";
 import { CollectionService } from "src/services/collection/collection.service";
 import { FileService } from "src/services/file/file.service";
-import { UserService } from "src/services/user/user.service";
 import { BookResolver } from "./book.resolver";
 
 @Module({
