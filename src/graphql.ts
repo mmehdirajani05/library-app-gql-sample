@@ -99,6 +99,13 @@ export interface BookWithCollection {
     ratings: BookRatings[];
 }
 
+export interface BookRatingsSubscription {
+    user_id: number;
+    user_name: string;
+    book_name: string;
+    count: number;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -124,6 +131,10 @@ export interface IMutation {
     updateCollection(updateCollectionArgs: UpdateCollectionArgs): string | Promise<string>;
     addBookRatings(addBookRatingsArgs: AddBookRatingsArgs): string | Promise<string>;
     getBookRatings(getBookRatingsArgs: GetBookRatingsArgs): BookRatings | Promise<BookRatings>;
+}
+
+export interface ISubscription {
+    addBookRatingsSubscription(): BookRatingsSubscription | Promise<BookRatingsSubscription>;
 }
 
 export type DateTime = any;

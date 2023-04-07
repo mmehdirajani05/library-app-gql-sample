@@ -37,6 +37,13 @@ type BookWithCollection {
   ratings: [BookRatings!]!
 }
 
+type BookRatingsSubscription {
+  user_id: Float!
+  user_name: String!
+  book_name: String!
+  count: Float!
+}
+
 type User {
   id: Int!
   name: String!
@@ -123,4 +130,8 @@ input AddBookRatingsArgs {
 input GetBookRatingsArgs {
   user_id: Float!
   book_id: Float!
+}
+
+type Subscription {
+  addBookRatingsSubscription: BookRatingsSubscription!
 }

@@ -116,4 +116,10 @@ export class UserService {
     console.log(id)
     throw new HttpException('User logged out successfully!', HttpStatus.OK)
   }
+
+  async GetUserById(userId: number) {
+    return this.userRepository.findOne({
+      where:  { id: userId }
+    })
+  }
 }

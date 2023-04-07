@@ -5,10 +5,12 @@ import { AddBookRatingsArgs } from 'src/book/args/addBookRatings.args';
 import { GetAllBooksArgs } from 'src/book/args/getAllBooks.args';
 import { GetBookRatingsArgs } from 'src/book/args/getBookRatings.args';
 import { UpdateBookArgs } from 'src/book/args/updateBook.args';
+import { BookRatingsSubscription } from 'src/book/schema/ratingsSubscription.schema';
 import { GetAWSSignedUrl } from 'src/constants/getAwsSignededUrl';
 import { BookModel } from 'src/models/books.model';
 import { CollectionModel } from 'src/models/collection.model';
 import { RatingModel } from 'src/models/rating.model';
+import { UserModel } from 'src/models/user.model';
 import { Repository } from 'typeorm';
 import { FileService } from '../file/file.service';
 
@@ -24,7 +26,10 @@ export class BooksService {
 
     @InjectRepository(RatingModel)
     private ratingsRepository: Repository<RatingModel>,
-
+    
+    @InjectRepository(UserModel)
+    private userRepository: Repository<UserModel>,
+    
     private filesService: FileService
   ) {}
 
@@ -210,20 +215,39 @@ export class BooksService {
 
   async AddBookRatings(params: AddBookRatingsArgs) {
     params = this.ValidateRatingParams(params)
-    const existingRatings = await this.ratingsRepository.findOne({
-      where: {
-        user_id: params.user_id,
-        book_id: params.book_id
-      }
-    })
+    const promises: any = [
+      this.ratingsRepository.findOne({
+        where: {
+          user_id: params.user_id,
+          book_id: params.book_id
+        }
+      }), 
+      this.userRepository.findOne({
+        where:  { id: params.user_id }
+      }),
+      this.bookRepository.findOne({
+        where: {
+          id: params.book_id
+        }
+      })
+
+    ]
+    const [existingRatings, user, book] :any = await Promise.all(promises)
+
+    const ratingsDetail: BookRatingsSubscription = {
+      user_id: params.user_id,
+      user_name: user ? user.name : 'UnKnown',
+      book_name: book? book.title : 'Anonymous',
+      count: params.count || 0
+    }
 
     if (!existingRatings) {
       const newRatings = await this.ratingsRepository.save(params)
-      return 'Ratings added Succesfully'
+      return  { message: 'Ratings added Succesfully', ratingsDetail }
     }
 
     await this.ratingsRepository.update(existingRatings.id, params)
-    return 'Ratings updated Succesfully'
+    return { message: 'Ratings updated Succesfully', ratingsDetail }
 
   }
 

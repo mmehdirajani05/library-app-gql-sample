@@ -20,6 +20,7 @@ import { UserModule } from './user/user.module';
       definitions: {
         path: join(process.cwd(), 'src/graphql.ts'),
       },
+      installSubscriptionHandlers: true,
     }),
     UserModule,
     BookModule

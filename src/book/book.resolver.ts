@@ -1,4 +1,4 @@
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
 import { AddBookArgs } from "./args/addBook.args";
 import { UpdateBookArgs } from "./args/updateBook.args";
 import { Book } from "./schema/book.schema";
@@ -12,6 +12,10 @@ import { BookWithCollection } from "./schema/bookWithCollection.schema";
 import { AddBookRatingsArgs } from "./args/addBookRatings.args";
 import { BookRatings } from "./schema/bookRatings.schema";
 import { GetBookRatingsArgs } from "./args/getBookRatings.args";
+import { PubSub } from 'graphql-subscriptions';
+import { BookRatingsSubscription } from "./schema/ratingsSubscription.schema";
+
+const pubSub = new PubSub();
 
 @Resolver(of => Book)
 export class BookResolver {
@@ -61,13 +65,22 @@ export class BookResolver {
   }
 
   @Mutation(returns => String, {name: 'addBookRatings'})
-  addBookRatings(@Args("addBookRatingsArgs") addBookRatingsArgs: AddBookRatingsArgs) {
-    return this.bookService.AddBookRatings(addBookRatingsArgs)
+  async addBookRatings(@Args("addBookRatingsArgs") addBookRatingsArgs: AddBookRatingsArgs) {
+    const { message, ratingsDetail }: any = await this.bookService.AddBookRatings(addBookRatingsArgs)
+    pubSub.publish('addBookRatingsSubscription', { addBookRatingsSubscription: ratingsDetail });
+    return message
   }
 
   @Mutation(returns => BookRatings, {name: 'getBookRatings'})
   getBookRatings(@Args("getBookRatingsArgs") getBookRatingsArgs: GetBookRatingsArgs) {
     return this.bookService.GetBookRatings(getBookRatingsArgs)
+  }
+
+  @Subscription((returns) => BookRatingsSubscription, {
+    name: 'addBookRatingsSubscription',
+  })
+  subcribeToBookRatingsAdded() {
+    return pubSub.asyncIterator('addBookRatingsSubscription');
   }
   
 }
