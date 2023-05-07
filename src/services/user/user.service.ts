@@ -13,7 +13,6 @@ export class UserService {
     @InjectRepository(UserModel)
     private userRepository: Repository<UserModel>,
     private readonly jwtService: JwtService
-    // @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   async VerifyEmailPassword(params: GetUserArgs) {
